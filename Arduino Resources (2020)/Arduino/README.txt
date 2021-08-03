@@ -1,0 +1,1 @@
+THis folder is a clone of the all the Arduino code from the 2020 team from their github repository.
