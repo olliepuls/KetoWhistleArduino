@@ -85,7 +85,7 @@ double convert_ADC_to_Voltage(int reading) {
   return voltage;
 }
 
-void setup() {
+void setup_ADC() {
 
   Serial.begin(9600);
   // Configure Board Interrupt (Optional)
@@ -105,7 +105,7 @@ void setup() {
   setup_ADC();
 }
 
-void loop() {
+void loop_ADC() {
   trigger_ADC_conversion();
 
   delay(100);
