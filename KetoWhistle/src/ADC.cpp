@@ -10,7 +10,7 @@ void reset_ADC() {
   
 }
 
-void setup_ADC() {
+void init_ADC() {
   // Mode = Normal, Smaple Rate = 20SPS, Single Shot Mode
   char reg_1 = 0b00000000;
   char write_command = 0b01000100;
@@ -62,7 +62,7 @@ double convert_ADC_to_Voltage(int reading) {
   return voltage;
 }
 
-void ADC_Init() {
+void ADC_setup() {
 
   // Configure Board Interrupt (Optional)
 //   attachInterrupt(digitalPinToInterrupt(7), read_ADC_Value, FALLING);
@@ -77,7 +77,7 @@ void ADC_Init() {
   reset_ADC();
 
   // Configure Modes
-  setup_ADC();
+  init_ADC();
 }
 
 void ADC_loop() {

@@ -18,13 +18,13 @@
 #include <SPI.h>
 
 void reset_ADC();
-void setup_ADC();
+void init_ADC();
 
 void trigger_ADC_conversion();
 void read_ADC_Value(int *ADC_Reading);
 
 double convert_ADC_to_Voltage(int reading);
 
-void ADC_Init();
+void ADC_setup();
 
 void ADC_loop();
