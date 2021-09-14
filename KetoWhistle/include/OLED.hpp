@@ -28,8 +28,7 @@ void draw_anu(Adafruit_SSD1306 *display, int time);
 
 void draw_logo(Adafruit_SSD1306 *display, int time);
 
-void disp_setup(Adafruit_SSD1306 *display);
+void OLED_setup(Adafruit_SSD1306 *display);
 
-void disp_loop(Adafruit_SSD1306 *display);
+void OLED_loop(Adafruit_SSD1306 *display);
 
-void disp_setup(Adafruit_SSD1306 *display);

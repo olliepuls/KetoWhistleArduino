@@ -160,14 +160,14 @@ void draw_logo(Adafruit_SSD1306 *display, int time) {
   (*display).clearDisplay();
 }
 
-void disp_setup(Adafruit_SSD1306 *display) {
+void OLED_setup(Adafruit_SSD1306 *display) {
   if(!(*display).begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
   }
   delay(2000);
   (*display).clearDisplay();
 }
 
-void disp_loop(Adafruit_SSD1306 *display) {
+void OLED_loop(Adafruit_SSD1306 *display) {
   draw_anu(display, 5000);
   draw_logo(display, 5000);
   int count_T = 0;

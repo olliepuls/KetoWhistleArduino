@@ -1,30 +1,17 @@
-// ADC Test Code
-#define SCLK_ADC 13
-#define MISO_ADC 12
-#define MOSI_ADC 11
-#define DRDY_ADC 7
-#define CS_ADC 6
-
-// Commands from ADS1220 data sheet
-// https://www.ti.com/lit/ds/symlink/ads1220.pdf?ts=1629642933337
-
-#define RESET_ADC 0b00000110
-#define START_ADC 0b00001000
-#define READ_DATA_ADC 0b00010000
-
-#define V_FULL_SCALE = 2.048
-
-#include <Wire.h>
+#include "Protocentral_ADS1220.h"
 #include <SPI.h>
 
-void reset_ADC();
-void init_ADC();
+#define PGA 1                // Programmable Gain, confirm that the same as set_pga_gain
+#define VREF 2.048            // Internal reference of 2.048V
+#define VFSR VREF/PGA
+#define FSR (((long int)1<<23)-1)
 
-void trigger_ADC_conversion();
-void read_ADC_Value(int *ADC_Reading);
+#define ADS1220_CS_PIN    6
+#define ADS1220_DRDY_PIN  7
 
-double convert_ADC_to_Voltage(int reading);
+// volatile bool drdyIntrFlag = false;
+void drdyInterruptHndlr();
+void enableInterruptPin();
+void ADC_setup(Protocentral_ADS1220 *pc_ads1220);
 
-void ADC_setup();
-
-void ADC_loop();
+void ADC_loop(Protocentral_ADS1220 *pc_ads1220);
