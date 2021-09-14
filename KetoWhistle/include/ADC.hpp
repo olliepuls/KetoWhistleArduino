@@ -15,3 +15,4 @@ void enableInterruptPin();
 void ADC_setup(Protocentral_ADS1220 *pc_ads1220);
 
 void ADC_loop(Protocentral_ADS1220 *pc_ads1220);
+float measure_acetone(Protocentral_ADS1220 *pc_ads1220);

@@ -9,7 +9,7 @@ void scd30_test_setup(SCD30_Modbus *scd30) {
    Serial.println("SCD30 modbus test!");
 
    // Initialize sensor
-   (*scd30).begin(&Serial1);
+   scd30->begin(&Serial1);
 
    // /*** Adjust the rate at which measurements are taken, from 2-1800 seconds */
    // if (!scd30.setMeasurementInterval(2)){
@@ -17,18 +17,18 @@ void scd30_test_setup(SCD30_Modbus *scd30) {
    //    while(1){ delay(10);}
    // }
    Serial.print("Measurement Interval: "); 
-   Serial.print((*scd30).getMeasurementInterval()); 
+   Serial.print(scd30->getMeasurementInterval()); 
    Serial.println(" seconds");
 
    // /*** Restart continuous measurement with a pressure offset from 700 to 1400 millibar.
    //  * Giving no argument or setting the offset to 0 will disable offset correction
    //  */
-   if (!(*scd30).startContinuousMeasurement(0)){
+   if (!scd30->startContinuousMeasurement(0)){
      Serial.println("ERROR! Failed to set ambient pressure offset");
      while(1){ delay(10);}
    }
    Serial.print("Ambient pressure offset: ");
-   Serial.print((*scd30).getAmbientPressureOffset());
+   Serial.print(scd30->getAmbientPressureOffset());
    Serial.println(" mBar");
 
    // /*** Set an altitude offset in meters above sea level.
@@ -40,7 +40,7 @@ void scd30_test_setup(SCD30_Modbus *scd30) {
    //   while(1){ delay(10);}
    // }
    Serial.print("Altitude offset: ");
-   Serial.print((*scd30).getAltitudeOffset());
+   Serial.print(scd30->getAltitudeOffset());
    Serial.println(" meters");
 
    // ** Set a temperature offset in hundredths of a degree celcius.
@@ -50,7 +50,7 @@ void scd30_test_setup(SCD30_Modbus *scd30) {
    //    while(1){ delay(10);}
    // }
    Serial.print("Temperature offset: ");
-   Serial.print((float)(*scd30).getTemperatureOffset()/100.0);
+   Serial.print((float)scd30->getTemperatureOffset()/100.0);
    Serial.println(" degrees C");
 
    // /*** Force the sensor to recalibrate with the given reference value
@@ -63,7 +63,7 @@ void scd30_test_setup(SCD30_Modbus *scd30) {
    //    while(1){ delay(10);}
    // }
    Serial.print("Forced Recalibration reference: ");
-   Serial.print((*scd30).getForcedCalibrationReference());
+   Serial.print(scd30->getForcedCalibrationReference());
    Serial.println(" ppm");
 
    // /*** Enable or disable automatic self calibration (ASC).
@@ -77,7 +77,7 @@ void scd30_test_setup(SCD30_Modbus *scd30) {
    //    Serial.println("ERROR! Failed to enable or disable self calibration");
    //    while(1){ delay(10);}
    // }
-   if ((*scd30).selfCalibrationEnabled()) {
+   if (scd30->selfCalibrationEnabled()) {
       Serial.print("Self calibration enabled");
    } else {
       Serial.print("Self calibration disabled");
@@ -85,24 +85,35 @@ void scd30_test_setup(SCD30_Modbus *scd30) {
 }
 
 void scd30_test_loop(SCD30_Modbus *scd30) {
-   if ((*scd30).dataReady()){
+   if (scd30->dataReady()){
       Serial.println("Data available!");
 
-      if (!(*scd30).read()){ Serial.println("Error reading sensor data"); return; }
+      if (!scd30->read()){ Serial.println("Error reading sensor data"); return; }
 
       Serial.print("Temperature: ");
-      Serial.print((*scd30).temperature);
+      Serial.print(scd30->temperature);
       Serial.println(" degrees C");
 
       Serial.print("Relative Humidity: ");
-      Serial.print((*scd30).relative_humidity);
+      Serial.print(scd30->relative_humidity);
       Serial.println(" %");
 
       Serial.print("CO2: ");
-      Serial.print((*scd30).CO2, 3);
+      Serial.print(scd30->CO2, 3);
       Serial.println(" ppm");
       Serial.println("");
    }
 
    delay(2000);
+}
+
+float measure_CO2(SCD30_Modbus *scd30) {
+   while (!scd30->dataReady());
+
+   if (scd30->dataReady()){
+      if (!scd30->read()){ Serial.println("Error reading sensor data"); return; }
+      return scd30->CO2;
+   } else {
+      return 0;
+   }
 }

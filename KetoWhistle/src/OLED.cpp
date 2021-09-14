@@ -112,12 +112,12 @@ const unsigned char PROGMEM loading [28][128] = {{0x00, 0x00, 0x00, 0x00, 0x00, 
 
 // Display text
 void Devicetext(Adafruit_SSD1306 *display, String text, int x, int y,int size, boolean d) {
-  (*display).setTextSize(size);
-  (*display).setTextColor(WHITE);
-  (*display).setCursor(x,y);
-  (*display).println(text);
+  display->setTextSize(size);
+  display->setTextColor(WHITE);
+  display->setCursor(x,y);
+  display->println(text);
   if(d){
-    (*display).display();
+    display->display();
   }
 }
 
@@ -128,9 +128,9 @@ void load(Adafruit_SSD1306 *display, int T){
   int tt=0;
   for (int j = 0; j<T; j += 1){
     for (int i = 0; i < 28; i++) {
-      (*display).clearDisplay();
-      (*display).drawBitmap(xx, yy,loading[i],32,32, 1);
-      (*display).display();
+      display->clearDisplay();
+      display->drawBitmap(xx, yy,loading[i],32,32, 1);
+      display->display();
       delay(tt);
     }
     delay(1000);
@@ -139,32 +139,82 @@ void load(Adafruit_SSD1306 *display, int T){
 
 // Resdy 
 void ready_sig(Adafruit_SSD1306 *display, int T1){
-  (*display).clearDisplay();
+  display->clearDisplay();
   Devicetext(display, "Ready!", 10, 10, 3, false);
-  (*display).display();
+  display->display();
   delay(T1); 
   
 } 
 
 void draw_anu(Adafruit_SSD1306 *display, int time) {
-  (*display).drawBitmap(0, 0, ANU_LOGO, 128, 32, 1);
-  (*display).display();
+  display->drawBitmap(0, 0, ANU_LOGO, 128, 32, 1);
+  display->display();
   delay(time);
-  (*display).clearDisplay();
+  display->clearDisplay();
 }
 
 void draw_logo(Adafruit_SSD1306 *display, int time) {
-  (*display).drawBitmap(0, 0, DEVICE_LOGO, 128, 32, 1);
-  (*display).display();
+  display->drawBitmap(0, 0, DEVICE_LOGO, 128, 32, 1);
+  display->display();
   delay(time);
-  (*display).clearDisplay();
+  display->clearDisplay();
+}
+
+void button_prompt(Adafruit_SSD1306 *display, int time) {
+  display->clearDisplay();
+  Devicetext(display, "Press button to begin measurements.", 20, 0, 1, false);
+  display->display();
+  delay(time);
+  display->clearDisplay();
+}
+
+void display_temperature(Adafruit_SSD1306 *display, int time, float temp) {
+  String TString =  String(temp,2);
+
+  Devicetext(display, "Heating!", 20, 0, 2, false);
+  Devicetext(display, "Temp: ", 30, 25, 1, false);
+  Devicetext(display, TString, 65, 25, 1, false);
+  Devicetext(display, "C", 90, 25, 1, false);
+  display->display();
+  delay(time);
+  display->clearDisplay();
+}
+
+void breath_prompt(Adafruit_SSD1306 *display) {
+  Devicetext(display, "Please breathe into the sensor.", 20, 0, 1, false);
+  display->display();
+}
+
+void breath_abort_prompt(Adafruit_SSD1306 *display, int time) {
+  display->clearDisplay();
+  Devicetext(display, "Breath not detected. Wait and try again.", 20, 0, 1, false);
+  display->display();
+  delay(time);
+  display->clearDisplay();
+}
+
+void display_acetone_results(Adafruit_SSD1306 *display, int time, float result) {
+  
+  display->clearDisplay();
+  
+  String res_str = String(result, 3);
+  
+  Devicetext(display, "Voltage", 20, 0, 2, false);
+  Devicetext(display, "Vout:   ", 10, 25, 1, false);
+  Devicetext(display, res_str, 45, 25, 1, false);
+  Devicetext(display, "mV", 100, 25, 1, false);
+  display->display();
+  
+  delay(time);
+  display->clearDisplay();
+
 }
 
 void OLED_setup(Adafruit_SSD1306 *display) {
-  if(!(*display).begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
+  if(!display->begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
   }
   delay(2000);
-  (*display).clearDisplay();
+  display->clearDisplay();
 }
 
 void OLED_loop(Adafruit_SSD1306 *display) {

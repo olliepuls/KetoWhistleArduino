@@ -1,6 +1,5 @@
 #include <ADC.hpp>
 
-
 void ADC_setup(Protocentral_ADS1220 *pc_ads1220)
 {
     Serial.begin(9600);
@@ -39,4 +38,10 @@ void ADC_loop(Protocentral_ADS1220 *pc_ads1220)
   Serial.print("  32bit HEX : ");
   Serial.println(adc_data,HEX);
   
+}
+
+float measure_acetone(Protocentral_ADS1220 *pc_ads1220) {
+  int32_t adc_data = pc_ads1220->Read_SingleShot_SingleEnded_WaitForData(MUX_AIN0_AVSS);
+  float Vout = (float)((adc_data*VFSR*1000)/FSR);
+  return Vout;
 }

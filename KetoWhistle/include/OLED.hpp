@@ -28,6 +28,12 @@ void draw_anu(Adafruit_SSD1306 *display, int time);
 
 void draw_logo(Adafruit_SSD1306 *display, int time);
 
+void button_prompt(Adafruit_SSD1306 *display, int time);
+void display_temperature(Adafruit_SSD1306 *display, int time, float temp);
+void breath_prompt(Adafruit_SSD1306 *display);
+void breath_abort_prompt(Adafruit_SSD1306 *display, int time);
+void display_acetone_results(Adafruit_SSD1306 *display, int time, float result);
+
 void OLED_setup(Adafruit_SSD1306 *display);
 
 void OLED_loop(Adafruit_SSD1306 *display);
