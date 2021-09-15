@@ -2,7 +2,7 @@
 
 void ADC_setup(Protocentral_ADS1220 *pc_ads1220)
 {
-    Serial.begin(9600);
+    //Serial.begin(9600);
 
     (*pc_ads1220).begin(ADS1220_CS_PIN, ADS1220_DRDY_PIN);
     (*pc_ads1220).set_data_rate(DR_20SPS);
@@ -33,10 +33,10 @@ void ADC_loop(Protocentral_ADS1220 *pc_ads1220)
   float Vout = (float)((adc_data*VFSR*1000)/FSR);
   delay(500);
 
-  Serial.print("Vout in mV : ");
-  Serial.print(Vout);
-  Serial.print("  32bit HEX : ");
-  Serial.println(adc_data,HEX);
+  //Serial.print("Vout in mV : ");
+  //Serial.print(Vout);
+  //Serial.print("  32bit HEX : ");
+  //Serial.println(adc_data,HEX);
   
 }
 

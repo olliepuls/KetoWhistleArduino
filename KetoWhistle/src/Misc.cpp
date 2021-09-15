@@ -8,5 +8,5 @@ void configure_button_interrupt() {
 
 void buttonHandler(){
     button_interrupt_flag = true;
-    Serial.println("Pressed Button");
+    //Serial.println("Pressed Button");
 }
