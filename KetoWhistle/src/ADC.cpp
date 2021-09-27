@@ -1,6 +1,6 @@
 #include <ADC.hpp>
 
-void ADC_setup(Protocentral_ADS1220 *pc_ads1220)
+void ADC_test_setup(Protocentral_ADS1220 *pc_ads1220)
 {
     Serial.begin(9600);
 
@@ -13,7 +13,7 @@ void ADC_setup(Protocentral_ADS1220 *pc_ads1220)
 
 }
 
-void ADC_loop(Protocentral_ADS1220 *pc_ads1220)
+void ADC_test_loop(Protocentral_ADS1220 *pc_ads1220)
 {
     // if(drdyIntrFlag){
     //     drdyIntrFlag = false;
