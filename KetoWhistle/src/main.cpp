@@ -22,7 +22,7 @@ float current_co2 =0;
 void ketoWhistle_setup() {
   OLED_setup(&display);
   scd30_test_setup(&scd30);
-  ADC_setup(&pc_ads1220);
+  ADC_test_setup(&pc_ads1220);
   configure_button_interrupt();
 
   draw_anu(&display);
