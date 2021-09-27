@@ -146,48 +146,61 @@ void ready_sig(Adafruit_SSD1306 *display, int T1){
   
 } 
 
-void draw_anu(Adafruit_SSD1306 *display, int time) {
+void draw_anu(Adafruit_SSD1306 *display) {
+  display->clearDisplay();
   display->drawBitmap(0, 0, ANU_LOGO, 128, 32, 1);
   display->display();
-  delay(time);
-  display->clearDisplay();
+  // delay(time);
+  
 }
 
-void draw_logo(Adafruit_SSD1306 *display, int time) {
+void draw_logo(Adafruit_SSD1306 *display) {
+  display->clearDisplay();
   display->drawBitmap(0, 0, DEVICE_LOGO, 128, 32, 1);
   display->display();
-  delay(time);
-  display->clearDisplay();
+  
 }
 
-void button_prompt(Adafruit_SSD1306 *display, int time) {
+void button_prompt(Adafruit_SSD1306 *display) {
   display->clearDisplay();
-  Devicetext(display, "Press button to begin measurements.", 20, 0, 1, false);
+  Devicetext(display, "Press button to ", 10, 5, 1, false);
+  Devicetext(display, "begin measurement.", 10, 15, 1, false);
   display->display();
-  delay(time);
-  display->clearDisplay();
+}
+
+void delay_on_flag(int time, int interval, bool flag) {
+  int total_time = 0;
+  while (total_time < time) {
+    delay(interval);
+    if (flag) {exit;}
+    total_time += interval;
+  }
 }
 
 void display_temperature(Adafruit_SSD1306 *display, int time, float temp) {
+  display->clearDisplay();
   String TString =  String(temp,2);
 
   Devicetext(display, "Heating!", 20, 0, 2, false);
-  Devicetext(display, "Temp: ", 30, 25, 1, false);
-  Devicetext(display, TString, 65, 25, 1, false);
-  Devicetext(display, "C", 90, 25, 1, false);
+  Devicetext(display, "Temp: ", 23, 25, 1, false);
+  Devicetext(display, TString, 58, 25, 1, false);
+  Devicetext(display, "C", 97, 25, 1, false);
   display->display();
   delay(time);
   display->clearDisplay();
 }
 
 void breath_prompt(Adafruit_SSD1306 *display) {
-  Devicetext(display, "Please breathe into the sensor.", 20, 0, 1, false);
+  display->clearDisplay();
+  Devicetext(display, "Please breathe into", 10, 5, 1, false);
+  Devicetext(display, "the sensor.", 10, 15, 1, false);
   display->display();
 }
 
 void breath_abort_prompt(Adafruit_SSD1306 *display, int time) {
   display->clearDisplay();
-  Devicetext(display, "Breath not detected. Wait and try again.", 20, 0, 1, false);
+  Devicetext(display, "Breath not detected.", 8, 5, 1, false);
+  Devicetext(display, "Wait and try again.", 10, 15, 1, false);
   display->display();
   delay(time);
   display->clearDisplay();
@@ -199,16 +212,26 @@ void display_acetone_results(Adafruit_SSD1306 *display, int time, float result) 
   
   String res_str = String(result, 3);
   
-  Devicetext(display, "Voltage", 20, 0, 2, false);
-  Devicetext(display, "Vout:   ", 10, 25, 1, false);
-  Devicetext(display, res_str, 45, 25, 1, false);
-  Devicetext(display, "mV", 100, 25, 1, false);
+  Devicetext(display, "Acetone", 20, 0, 2, false);
+  Devicetext(display, "Level=   ", 10, 25, 1, false);
+  Devicetext(display, res_str, 50, 25, 1, false);
+  Devicetext(display, "ppm", 95, 25, 1, false);
   display->display();
   
-  delay(time);
+  delay(time/2);
   display->clearDisplay();
 
+  display->clearDisplay();
+  float count=1.87;
+  String vString =  String(count, 2);
+  Devicetext(display, "Good! ", 25, 1, 2, false);
+  Devicetext(display, vString, 25, 25, 1, false);
+  Devicetext(display, "ppm", 55, 25, 1, false);
+  display->drawBitmap(90, 0, happy_face, 32,32, 1);
+  display->display();
+  delay(time/2);
 }
+
 
 void OLED_setup(Adafruit_SSD1306 *display) {
   if(!display->begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
@@ -217,18 +240,20 @@ void OLED_setup(Adafruit_SSD1306 *display) {
   display->clearDisplay();
 }
 
-void OLED_loop(Adafruit_SSD1306 *display) {
-  draw_anu(display, 5000);
-  draw_logo(display, 5000);
+void OLED_test_loop(Adafruit_SSD1306 *display) {
+  draw_anu(display);
+  delay(5000);
+  draw_logo(display);
+  delay(5000);
   int count_T = 0;
   for(int i = 0; i<13; i+=1){
     String TString =  String(count_T,0);
     
     display->clearDisplay();
     Devicetext(display, "Heating!", 20, 0, 2, false);
-    Devicetext(display, "Temp:   ", 30, 25, 1, false);
-    Devicetext(display, TString, 65, 25, 1, false);
-    Devicetext(display, "C", 90, 25, 1, false);
+    Devicetext(display, "Temp:   ", 25, 25, 1, false);
+    Devicetext(display, TString, 60, 25, 1, false);
+    Devicetext(display, "C", 95, 25, 1, false);
     display->display();
     
     if(count_T < 349)

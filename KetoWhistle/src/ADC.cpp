@@ -43,5 +43,12 @@ void ADC_loop(Protocentral_ADS1220 *pc_ads1220)
 float measure_acetone(Protocentral_ADS1220 *pc_ads1220) {
   int32_t adc_data = pc_ads1220->Read_SingleShot_SingleEnded_WaitForData(MUX_AIN0_AVSS);
   float Vout = (float)((adc_data*VFSR*1000)/FSR);
+  // float acetone = convert_voltage_to_acetone(Vout);
   return Vout;
+}
+
+// Placeholder Function
+float convert_voltage_to_acetone(float voltage) {
+  float acetone = voltage;
+  return acetone;
 }

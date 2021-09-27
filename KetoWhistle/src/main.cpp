@@ -1,45 +1,57 @@
 #include <OLED.hpp>
 #include <ADC.hpp>
-// #include <BLE.hpp>
+#include <BLE.hpp>
 #include <CO2.hpp>
 #include <Misc.hpp>
+
+// Pin Definitions
+#define ENAB_1 9
 
 Protocentral_ADS1220 pc_ads1220;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 SCD30_Modbus scd30;
 
-// // BLE test Service
-// BLEService testService("FFE0");
+// BLE test Service
+BLEService testService("FFE0");
 
-// // BLE test Characteristic
-// BLECharacteristic testChar("FFE1",  // standard 16-bit characteristic UUID
-//     BLERead | BLENotify, 20); // remote clients will be able to get notifications if this characteristic changes
-//                               //20 is the maximum size of the characteristic buffer in bytes
+// BLE test Characteristic
+BLEUnsignedIntCharacteristic pressureCharacteristic("2A6D", BLERead | BLENotify); // remote clients will be able to get notifications if this characteristic changes
 
-void setup()
-{
+void ketoWhistle_setup() {
   OLED_setup(&display);
   scd30_test_setup(&scd30);
   ADC_setup(&pc_ads1220);
   configure_button_interrupt();
 
-  draw_anu(&display, 2000);
-  draw_logo(&display, 2000);
+  draw_anu(&display);
+  delay(2000);
+  draw_logo(&display);
+  delay(2000);
+  // Set Enable Pin for acetone sensor to OFF
+  digitalWrite(ENAB_1, LOW);
 }
 
-void loop()
-{
+void ketoWhistle_loop() {
   // INITIAL STAGE - Waiting for Button Press to commence heating cycle. Take baseline CO2 level measurement.
   float baseline_co2 = measure_CO2(&scd30);
 
   while (!button_interrupt_flag) {
-    draw_anu(&display, 1500);
-    draw_logo(&display, 1500);
-    button_prompt(&display, 2000);
+    draw_anu(&display);
+    delay_on_flag(2000, 100, button_interrupt_flag);
+    if (button_interrupt_flag) {break;}
+    draw_logo(&display);
+    delay_on_flag(2000, 100, button_interrupt_flag);
+    if (button_interrupt_flag) {break;}
+    button_prompt(&display);
+    delay_on_flag(2000, 100, button_interrupt_flag);
+    if (button_interrupt_flag) {break;}
   }
+
   button_interrupt_flag = false; // Reset button interrupt.
 
   // HEATING STAGE - Display Temperature 
+  // Turn on Acetone heater & Sensor Circuit
+  digitalWrite(ENAB_1, HIGH);
   float temp = 0.0;
   while (temp < 300) {
     // TODO: Calibrate temp sensor to return actual voltages.
@@ -72,42 +84,18 @@ void loop()
       baseline_co2 = min(current_co2, baseline_co2);
     }
   }
-
+  digitalWrite(ENAB_1, LOW);
   // RESULTS DISPLAY - Display acetone measurement results.
   display_acetone_results(&display, 10000, acetone_level);
-  
-
-  // RETURN TO STANDBY AFTER 10 SECONDS
-
-  // scd30_test_loop(&scd30);
-  
-
-  // float ave_voltage = 0.0;
-  // String volts;
-  // for(int i = 0; i < 5; i++) {
-  //   int32_t adc_data = pc_ads1220.Read_SingleShot_SingleEnded_WaitForData(MUX_AIN0_AVSS);
-  //   float Vout = (float)((adc_data*VFSR*1000)/FSR);
-  //   ave_voltage += Vout;
-  //   volts = String(Vout, 3);
-
-  //   Devicetext(&display, "Voltage", 20, 0, 2, false);
-  //   Devicetext(&display, "Vout:   ", 10, 25, 1, false);
-  //   Devicetext(&display, volts, 45, 25, 1, false);
-  //   Devicetext(&display, "mV", 100, 25, 1, false);
-  //   display.display();
-
-  //   delay(500);
-  //   display.clearDisplay();
-  // }
-
-  // ave_voltage = ave_voltage / 5;
-  // volts = String(ave_voltage, 3);
-  // Devicetext(&display, "Average", 20, 0, 2, false);
-  // Devicetext(&display, "Vave:   ", 10, 25, 1, false);
-  // Devicetext(&display, volts, 45, 25, 1, false);
-  // Devicetext(&display, "mV", 100, 25, 1, false);
-  // display.display();
-  // delay(1000);
-  // display.clearDisplay();
-  
 }
+
+void setup()
+{
+  ketoWhistle_setup();
+}
+
+void loop()
+{
+  ketoWhistle_loop();
+}
+
