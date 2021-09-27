@@ -2,6 +2,7 @@
 #define TEMP_PIN A3
 
 #include <Arduino.h>
+#include <NanoBLEFlashPrefs.h>
 
 extern volatile bool button_interrupt_flag;
 

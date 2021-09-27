@@ -10,6 +10,7 @@
 Protocentral_ADS1220 pc_ads1220;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 SCD30_Modbus scd30;
+NanoBLEFlashPrefs myFlashPrefs;
 
 // BLE test Service
 BLEService testService("FFE0");
