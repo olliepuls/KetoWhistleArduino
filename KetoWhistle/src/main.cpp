@@ -16,6 +16,8 @@ BLEService testService("FFE0");
 
 // BLE test Characteristic
 BLEUnsignedIntCharacteristic pressureCharacteristic("2A6D", BLERead | BLENotify); // remote clients will be able to get notifications if this characteristic changes
+float current_co2 =0;
+
 
 void ketoWhistle_setup() {
   OLED_setup(&display);
@@ -69,9 +71,9 @@ void ketoWhistle_loop() {
     
     for (int i = 0; i < 5; i++) {
       current_co2 = measure_CO2(&scd30);
-      Serial.print(baseline_co2);
-      Serial.print("  ");
-      Serial.println(current_co2);
+      //Serial.print(baseline_co2);
+      //Serial.print("  ");
+      //Serial.println(current_co2);
       if (current_co2 > baseline_co2 + 500) {break;}
       delay(2000);
     }
@@ -83,6 +85,7 @@ void ketoWhistle_loop() {
       breath_abort_prompt(&display, 1000);
       baseline_co2 = min(current_co2, baseline_co2);
     }
+    acetone_level = measure_acetone(&pc_ads1220);
   }
   digitalWrite(ENAB_1, LOW);
   // RESULTS DISPLAY - Display acetone measurement results.
