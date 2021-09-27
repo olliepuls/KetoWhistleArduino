@@ -1,38 +1,59 @@
 #include <OLED.hpp>
 #include <ADC.hpp>
-// #include <BLE.hpp>
+#include <BLE.hpp>
 #include <CO2.hpp>
 #include <Misc.hpp>
+
+// Pin Definitions
+#define ENAB_1 9
 
 Protocentral_ADS1220 pc_ads1220;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 SCD30_Modbus scd30;
+
+// BLE test Service
+BLEService testService("FFE0");
+
+// BLE test Characteristic
+BLEUnsignedIntCharacteristic pressureCharacteristic("2A6D", BLERead | BLENotify); // remote clients will be able to get notifications if this characteristic changes
 float current_co2 =0;
 
-void setup()
-{
+
+void ketoWhistle_setup() {
   OLED_setup(&display);
   scd30_test_setup(&scd30);
   ADC_setup(&pc_ads1220);
   configure_button_interrupt();
 
-  draw_anu(&display, 2000);
-  draw_logo(&display, 2000);
+  draw_anu(&display);
+  delay(2000);
+  draw_logo(&display);
+  delay(2000);
+  // Set Enable Pin for acetone sensor to OFF
+  digitalWrite(ENAB_1, LOW);
 }
 
-void loop()
-{
+void ketoWhistle_loop() {
   // INITIAL STAGE - Waiting for Button Press to commence heating cycle. Take baseline CO2 level measurement.
   float baseline_co2 = measure_CO2(&scd30);
 
   while (!button_interrupt_flag) {
-    draw_anu(&display, 1500);
-    draw_logo(&display, 1500);
-    button_prompt(&display, 2000);
+    draw_anu(&display);
+    delay_on_flag(2000, 100, button_interrupt_flag);
+    if (button_interrupt_flag) {break;}
+    draw_logo(&display);
+    delay_on_flag(2000, 100, button_interrupt_flag);
+    if (button_interrupt_flag) {break;}
+    button_prompt(&display);
+    delay_on_flag(2000, 100, button_interrupt_flag);
+    if (button_interrupt_flag) {break;}
   }
+
   button_interrupt_flag = false; // Reset button interrupt.
 
   // HEATING STAGE - Display Temperature 
+  // Turn on Acetone heater & Sensor Circuit
+  digitalWrite(ENAB_1, HIGH);
   float temp = 0.0;
   while (temp < 300) {
     // TODO: Calibrate temp sensor to return actual voltages.
@@ -66,7 +87,18 @@ void loop()
     }
     acetone_level = measure_acetone(&pc_ads1220);
   }
-
+  digitalWrite(ENAB_1, LOW);
   // RESULTS DISPLAY - Display acetone measurement results.
-  display_acetone_results(&display, 2000, acetone_level);
+  display_acetone_results(&display, 10000, acetone_level);
 }
+
+void setup()
+{
+  ketoWhistle_setup();
+}
+
+void loop()
+{
+  ketoWhistle_loop();
+}
+

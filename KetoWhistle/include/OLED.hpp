@@ -24,11 +24,12 @@ void load(Adafruit_SSD1306 *display, int T);
 
 void ready_sig(Adafruit_SSD1306 *display, int T1);
 
-void draw_anu(Adafruit_SSD1306 *display, int time);
+void draw_anu(Adafruit_SSD1306 *display);
 
-void draw_logo(Adafruit_SSD1306 *display, int time);
+void draw_logo(Adafruit_SSD1306 *display);
+void delay_on_flag(int time, int interval, bool flag);
 
-void button_prompt(Adafruit_SSD1306 *display, int time);
+void button_prompt(Adafruit_SSD1306 *display);
 void display_temperature(Adafruit_SSD1306 *display, int time, float temp);
 void breath_prompt(Adafruit_SSD1306 *display);
 void breath_abort_prompt(Adafruit_SSD1306 *display, int time);
