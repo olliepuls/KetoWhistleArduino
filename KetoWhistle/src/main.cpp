@@ -39,7 +39,7 @@ void ketoWhistle_setup() {
 void ketoWhistle_loop() {
   // INITIAL STAGE - Waiting for Button Press to commence heating cycle. Take baseline CO2 level measurement.
   float baseline_co2 = measure_CO2(&scd30);
-
+  button_interrupt_flag = false; // Reset button interrupt.
   while (!button_interrupt_flag) {
     draw_anu(&display);
     delay_on_flag(2000, 100, button_interrupt_flag);
@@ -67,29 +67,36 @@ void ketoWhistle_loop() {
 
   // BREATH STAGE - Prompt user to breathe into tube. Monitor CO2 levels for increase.
   bool breath_detected = false;
-  float acetone_level;
-  while (!breath_detected) {
-    breath_prompt(&display);
-    float current_co2 = 0.0;
+  button_interrupt_flag = false; // Reset button interrupt.
+  float acetone_level = 12.2;
+  // while (!breath_detected) {
+  //   breath_prompt(&display);
+  //   float current_co2 = 0.0;
     
-    for (int i = 0; i < 5; i++) {
-      current_co2 = measure_CO2(&scd30);
-      //Serial.print(baseline_co2);
-      //Serial.print("  ");
-      //Serial.println(current_co2);
-      if (current_co2 > baseline_co2 + 500) {break;}
-      delay(2000);
-    }
+  //   for (int i = 0; i < 5; i++) {
+  //     current_co2 = measure_CO2(&scd30);
+  //     //Serial.print(baseline_co2);
+  //     //Serial.print("  ");
+  //     //Serial.println(current_co2);
+  //     if (current_co2 > baseline_co2 + 500) {break;}
+  //     delay(2000);
+  //   }
 
-    if (current_co2 > baseline_co2 + 500) {
-      acetone_level = measure_acetone(&pc_ads1220);
-      breath_detected = true;
-    } else {
-      breath_abort_prompt(&display, 1000);
-      baseline_co2 = min(current_co2, baseline_co2);
-    }
-    acetone_level = measure_acetone(&pc_ads1220);
+  //   if (current_co2 > baseline_co2 + 500) {
+  //     acetone_level = measure_acetone(&pc_ads1220);
+  //     breath_detected = true;
+  //   } else {
+  //     breath_abort_prompt(&display, 1000);
+  //     baseline_co2 = min(current_co2, baseline_co2);
+  //   }
+  //   acetone_level = measure_acetone(&pc_ads1220);
+  // }
+
+
+  while (!button_interrupt_flag) {
+    delay(1);
   }
+
   digitalWrite(ENAB_1, LOW);
   // Send results to Bluetooth if connected.
   
