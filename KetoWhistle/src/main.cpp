@@ -53,7 +53,7 @@ void ketoWhistle_loop() {
   }
 
   button_interrupt_flag = false; // Reset button interrupt.
-
+  tone(A2, 1000);
   // HEATING STAGE - Display Temperature 
   // Turn on Acetone heater & Sensor Circuit
   digitalWrite(ENAB_1, HIGH);
@@ -70,7 +70,7 @@ void ketoWhistle_loop() {
   button_interrupt_flag = false; // Reset button interrupt.
   float acetone_level = 12.2;
   // while (!breath_detected) {
-  //   breath_prompt(&display);
+  breath_prompt(&display);
   //   float current_co2 = 0.0;
     
   //   for (int i = 0; i < 5; i++) {
@@ -96,6 +96,7 @@ void ketoWhistle_loop() {
   while (!button_interrupt_flag) {
     delay(1);
   }
+  tone(A2, 1000, 1000);
 
   digitalWrite(ENAB_1, LOW);
   // Send results to Bluetooth if connected.
