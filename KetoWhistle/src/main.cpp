@@ -53,7 +53,6 @@ void ketoWhistle_loop() {
   }
 
   button_interrupt_flag = false; // Reset button interrupt.
-  tone(A2, 1000);
   // HEATING STAGE - Display Temperature 
   // Turn on Acetone heater & Sensor Circuit
   digitalWrite(ENAB_1, HIGH);
