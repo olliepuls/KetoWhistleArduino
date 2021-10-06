@@ -16,7 +16,7 @@ NanoBLEFlashPrefs myFlashPrefs;
 BLEService testService("FFE0");
 
 // BLE test Characteristic
-BLEUnsignedIntCharacteristic pressureCharacteristic("2A6D", BLERead | BLENotify); // remote clients will be able to get notifications if this characteristic changes
+BLEUnsignedIntCharacteristic acetoneCharacteristic("2A6C", BLERead | BLENotify); // remote clients will be able to get notifications if this characteristic changes
 float current_co2 =0;
 
 
@@ -24,6 +24,8 @@ void ketoWhistle_setup() {
   OLED_setup(&display);
   scd30_test_setup(&scd30);
   ADC_test_setup(&pc_ads1220);
+  BLE_setup(&testService, &acetoneCharacteristic);
+
   configure_button_interrupt();
 
   draw_anu(&display);
@@ -89,17 +91,25 @@ void ketoWhistle_loop() {
     acetone_level = measure_acetone(&pc_ads1220);
   }
   digitalWrite(ENAB_1, LOW);
+  // Send results to Bluetooth if connected.
+  
+  if (BLE.connected()) {
+    acetoneCharacteristic.writeValue((uint32_t) acetone_level);
+  }
+  
   // RESULTS DISPLAY - Display acetone measurement results.
   display_acetone_results(&display, 10000, acetone_level);
 }
 
 void setup()
 {
-  ketoWhistle_setup();
+  BLE_setup(&testService, &acetoneCharacteristic);
+  // ketoWhistle_setup();
 }
 
 void loop()
 {
-  ketoWhistle_loop();
+  // ketoWhistle_loop();
+  loop_BLE(&testService, &acetoneCharacteristic);
 }
 

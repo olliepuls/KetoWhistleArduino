@@ -8,7 +8,7 @@ void ADC_test_setup(Protocentral_ADS1220 *pc_ads1220)
     (*pc_ads1220).set_data_rate(DR_20SPS);
     (*pc_ads1220).PGA_OFF();
     // pc_ads1220.set_pga_gain(PGA_GAIN_1);
-    (*pc_ads1220).select_mux_channels(MUX_AIN0_AVSS);  //Configure for differential measurement between AIN0 and AIN1
+    (*pc_ads1220).select_mux_channels(MUX_AIN0_AVSS);  //Configure for single-ended measurement on AIN0.
     (*pc_ads1220).set_conv_mode_single_shot();          //Set continuous conversion mode
 
 }

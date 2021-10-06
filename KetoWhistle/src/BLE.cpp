@@ -2,7 +2,7 @@
 
 #include <BLE.hpp>
 #ifdef BLE_DEFINED
-void setup_BLE(BLEService *service, BLECharacteristic *characteristic) {
+void BLE_setup(BLEService *service, BLECharacteristic *characteristic) {
   // begin initialization
   if (!BLE.begin()) {
   }
@@ -40,19 +40,13 @@ void loop_BLE(BLEService *service, BLECharacteristic *characteristic) {
 
     // check the test level every 200ms
     // while the central is connected:
-    long previousMillis = millis();
-    unsigned int data = 0;
+    uint32_t data = 0;
 
     while (central.connected()) {
-      long currentMillis = millis();
       // if 200ms have passed, check the test level:
-      if (currentMillis - previousMillis >= 200) {
-        previousMillis = currentMillis;
-        (*characteristic).writeValue((uint32_t) data);  
-        data += 1;
-      }
-      previousMillis = currentMillis; 
-
+      (*characteristic).writeValue((uint32_t) data);  
+      data += 1;
+      delay(1000);
     }
     
     // when the central disconnects, turn off the LED:
