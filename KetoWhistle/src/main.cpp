@@ -7,6 +7,8 @@
 // Pin Definitions
 #define ENAB_1 9
 
+#define CO2_THRESHOLD 200
+
 Protocentral_ADS1220 pc_ads1220;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 SCD30_Modbus scd30;
@@ -18,6 +20,7 @@ BLEService testService("FFE0");
 // BLE test Characteristic
 BLEUnsignedIntCharacteristic acetoneCharacteristic("2A6C", BLERead | BLENotify); // remote clients will be able to get notifications if this characteristic changes
 float current_co2 =0;
+
 
 
 void ketoWhistle_setup() {
@@ -52,7 +55,8 @@ void ketoWhistle_loop() {
     if (button_interrupt_flag) {break;}
   }
 
-  button_interrupt_flag = false; // Reset button interrupt.
+  // button_interrupt_flag = false; // Reset button interrupt.
+  
   // HEATING STAGE - Display Temperature 
   // Turn on Acetone heater & Sensor Circuit
   digitalWrite(ENAB_1, HIGH);
@@ -68,33 +72,33 @@ void ketoWhistle_loop() {
   bool breath_detected = false;
   button_interrupt_flag = false; // Reset button interrupt.
   float acetone_level = 12.2;
-  // while (!breath_detected) {
-  breath_prompt(&display);
-  //   float current_co2 = 0.0;
+  while (!breath_detected) {
+    breath_prompt(&display);
+    float current_co2 = 0.0;
     
-  //   for (int i = 0; i < 5; i++) {
-  //     current_co2 = measure_CO2(&scd30);
-  //     //Serial.print(baseline_co2);
-  //     //Serial.print("  ");
-  //     //Serial.println(current_co2);
-  //     if (current_co2 > baseline_co2 + 500) {break;}
-  //     delay(2000);
-  //   }
+    for (int i = 0; i < 5; i++) {
+      current_co2 = measure_CO2(&scd30);
+      //Serial.print(baseline_co2);
+      //Serial.print("  ");
+      //Serial.println(current_co2);
+      if (current_co2 > baseline_co2 + CO2_THRESHOLD) {break;}
+      delay(2000);
+    }
 
-  //   if (current_co2 > baseline_co2 + 500) {
-  //     acetone_level = measure_acetone(&pc_ads1220);
-  //     breath_detected = true;
-  //   } else {
-  //     breath_abort_prompt(&display, 1000);
-  //     baseline_co2 = min(current_co2, baseline_co2);
-  //   }
-  //   acetone_level = measure_acetone(&pc_ads1220);
-  // }
-
-
-  while (!button_interrupt_flag) {
-    delay(1);
+    if (current_co2 > baseline_co2 + CO2_THRESHOLD) {
+      acetone_level = measure_acetone(&pc_ads1220);
+      breath_detected = true;
+    } else {
+      breath_abort_prompt(&display, 1000);
+      baseline_co2 = min(current_co2, baseline_co2);
+    }
+    // acetone_level = measure_acetone(&pc_ads1220);
   }
+
+
+  // while (!button_interrupt_flag) {
+  //   delay(1);
+  // }
   tone(A2, 1000, 1000);
 
   digitalWrite(ENAB_1, LOW);
