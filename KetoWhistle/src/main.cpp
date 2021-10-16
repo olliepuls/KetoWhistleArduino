@@ -7,6 +7,7 @@
 // Pin Definitions
 #define ENAB_1 9
 
+// CO2 Detection Threshold
 #define CO2_THRESHOLD 200
 
 Protocentral_ADS1220 pc_ads1220;
@@ -19,7 +20,9 @@ BLEService testService("FFE0");
 
 // BLE test Characteristic
 BLEUnsignedIntCharacteristic acetoneCharacteristic("2A6C", BLERead | BLENotify); // remote clients will be able to get notifications if this characteristic changes
-float current_co2 =0;
+
+// CO2 Global Variable
+float current_co2 = 0.0;
 
 
 
@@ -76,7 +79,6 @@ void ketoWhistle_loop() {
   float acetone_level = 12.2;
   while (!breath_detected) {
     breath_prompt(&display);
-    float current_co2 = 0.0;
     
     for (int i = 0; i < 5; i++) {
       current_co2 = measure_CO2(&scd30);

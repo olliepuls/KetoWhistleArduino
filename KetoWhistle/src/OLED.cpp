@@ -219,17 +219,17 @@ void display_acetone_results(Adafruit_SSD1306 *display, int time, float result) 
   display->display();
   
   delay(time/2);
-  display->clearDisplay();
+  
 
   display->clearDisplay();
-  float count=1.87;
-  String vString =  String(count, 2);
+  
   Devicetext(display, "Good! ", 25, 1, 2, false);
-  Devicetext(display, vString, 25, 25, 1, false);
+  Devicetext(display, res_str, 25, 25, 1, false);
   Devicetext(display, "ppm", 55, 25, 1, false);
   display->drawBitmap(90, 0, happy_face, 32,32, 1);
   display->display();
   delay(time/2);
+  display->clearDisplay();
 }
 
 
