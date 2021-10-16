@@ -172,7 +172,7 @@ void delay_on_flag(int time, int interval, bool flag) {
   int total_time = 0;
   while (total_time < time) {
     delay(interval);
-    if (flag) {exit;}
+    if (flag) {break;}
     total_time += interval;
   }
 }
