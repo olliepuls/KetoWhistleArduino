@@ -22,7 +22,7 @@ BLEService testService("FFE0");
 BLEUnsignedIntCharacteristic acetoneCharacteristic("2A6C", BLERead | BLENotify); // remote clients will be able to get notifications if this characteristic changes
 
 // CO2 Global Variable
-float current_co2 = 0.0;
+float current_co2 = 10.0;
 
 
 
