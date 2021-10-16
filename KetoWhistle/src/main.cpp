@@ -74,7 +74,7 @@ void ketoWhistle_loop() {
   float acetone_level = 12.2;
 
   baseline_co2 += co2_threshold;
-  while (!breath_detected || !button_interrupt_flag) {
+  while (!(breath_detected || button_interrupt_flag)) {
     breath_prompt(&display);
     
     for (int i = 0; i < 5; i++) {
@@ -86,8 +86,7 @@ void ketoWhistle_loop() {
       current_co2 = measure_CO2(&scd30);
       display_acetone_results(&display, 2000, current_co2);
       if (current_co2 > (baseline_co2)) {
-        breath_detected = true;
-        display_temperature(&display, 800, 50);
+        breath_detected = 1;
         break;
       }
       
@@ -98,6 +97,8 @@ void ketoWhistle_loop() {
     }
 
     if (breath_detected || button_interrupt_flag) {
+      display_temperature(&display, 800, 50);
+
       acetone_level = measure_acetone(&pc_ads1220);
       acetone_level = 0.51;
       // breath_detected = true;
