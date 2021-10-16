@@ -78,11 +78,12 @@ void ketoWhistle_loop() {
     
     for (int i = 0; i < 5; i++) {
       current_co2 = measure_CO2(&scd30);
+      display_acetone_results(&display, 2000, current_co2);
       //Serial.print(baseline_co2);
       //Serial.print("  ");
       //Serial.println(current_co2);
       if (current_co2 > baseline_co2 + CO2_THRESHOLD) {break;}
-      delay(2000);
+      // delay(2000);
     }
 
     if (current_co2 > baseline_co2 + CO2_THRESHOLD) {
