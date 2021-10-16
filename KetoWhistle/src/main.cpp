@@ -83,10 +83,10 @@ void ketoWhistle_loop() {
       //Serial.print(baseline_co2);
       //Serial.print("  ");
       //Serial.println(current_co2);
-      display_acetone_results(&display, 2000, baseline_co2);
+      display_acetone_results(&display, 2000, co2_threshold);
       current_co2 = measure_CO2(&scd30);
-      display_acetone_results(&display, 2000, current_co2);
-      if (current_co2 > (baseline_co2)) {
+      display_acetone_results(&display, 2000, current_co2 - baseline_co2);
+      if ((current_co2 - baseline_co2) > co2_threshold) {
         breath_detected = 1;
         break;
       }
@@ -100,15 +100,11 @@ void ketoWhistle_loop() {
     if (breath_detected || button_interrupt_flag) {
       acetone_level = measure_acetone(&pc_ads1220);
       acetone_level = 0.51;
-      // breath_detected = true;
     } else {
       breath_abort_prompt(&display, 2000);
       baseline_co2 = min(current_co2, baseline_co2);
-      baseline_co2 += co2_threshold;
     }
-    // acetone_level = measure_acetone(&pc_ads1220);
   }
-
   
   tone(A2, 1000, 2000);
 
