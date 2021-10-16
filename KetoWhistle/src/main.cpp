@@ -31,10 +31,7 @@ void ketoWhistle_setup() {
 
   configure_button_interrupt();
 
-  // draw_anu(&display);
-  // delay(2000);
-  // draw_logo(&display);
-  // delay(2000);
+
   // Set Enable Pin for acetone sensor to OFF
   digitalWrite(ENAB_1, LOW);
 }
