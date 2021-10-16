@@ -8,7 +8,7 @@
 #define ENAB_1 9
 
 // CO2 Detection Threshold
-#define CO2_THRESHOLD 200
+#define CO2_THRESHOLD 200.0
 
 Protocentral_ADS1220 pc_ads1220;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -95,7 +95,7 @@ void ketoWhistle_loop() {
       acetone_level = measure_acetone(&pc_ads1220);
       breath_detected = true;
     } else {
-      breath_abort_prompt(&display, 1000);
+      breath_abort_prompt(&display, 2000);
       baseline_co2 = min(current_co2, baseline_co2);
     }
     // acetone_level = measure_acetone(&pc_ads1220);
