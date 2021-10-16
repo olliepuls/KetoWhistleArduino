@@ -113,7 +113,7 @@ float measure_CO2(SCD30_Modbus *scd30) {
    if (scd30->dataReady()){
       if (!scd30->read()){int i = 1;}; //{ Serial.println("Error reading sensor data"); return 0.0; }
       
-      float result = scd30->CO2;
+      float result = (float) scd30->CO2;
       return result;
    } 
    return 20.0;
