@@ -22,7 +22,7 @@ BLEUnsignedIntCharacteristic acetoneCharacteristic("2A6C", BLERead | BLENotify);
 
 // CO2 Global Variable
 float current_co2 = 10.0;
-float co2_threshold = 200.0;
+float co2_threshold = 200.0F;
 
 
 
