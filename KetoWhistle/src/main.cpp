@@ -8,7 +8,6 @@
 #define ENAB_1 9
 
 // CO2 Detection Threshold
-#define CO2_THRESHOLD 200.0
 
 Protocentral_ADS1220 pc_ads1220;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -23,6 +22,7 @@ BLEUnsignedIntCharacteristic acetoneCharacteristic("2A6C", BLERead | BLENotify);
 
 // CO2 Global Variable
 float current_co2 = 10.0;
+float co2_threshold = 200.0;
 
 
 
@@ -83,7 +83,9 @@ void ketoWhistle_loop() {
       display_acetone_results(&display, 2000, baseline_co2);
       current_co2 = measure_CO2(&scd30);
       display_acetone_results(&display, 2000, current_co2);
-      if (current_co2 > baseline_co2 + CO2_THRESHOLD) {break;}
+      if (current_co2 > (baseline_co2 + co2_threshold)) {
+        break;
+      }
       
       if (button_interrupt_flag) {
         break;
@@ -91,7 +93,7 @@ void ketoWhistle_loop() {
       // delay(2000);
     }
 
-    if (current_co2 > baseline_co2 + CO2_THRESHOLD || button_interrupt_flag) {
+    if (current_co2 > (baseline_co2 + co2_threshold) || button_interrupt_flag) {
       acetone_level = measure_acetone(&pc_ads1220);
       breath_detected = true;
     } else {
