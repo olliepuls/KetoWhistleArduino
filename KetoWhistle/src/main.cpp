@@ -83,14 +83,12 @@ void ketoWhistle_loop() {
       if (current_co2 > baseline_co2 + CO2_THRESHOLD) {break;}
       
       if (button_interrupt_flag) {
-        acetone_level = measure_acetone(&pc_ads1220);
-        breath_detected = true;
         break;
       }
-      // delay(2000);
+      delay(2000);
     }
 
-    if (current_co2 > baseline_co2 + CO2_THRESHOLD) {
+    if (current_co2 > baseline_co2 + CO2_THRESHOLD || button_interrupt_flag) {
       acetone_level = measure_acetone(&pc_ads1220);
       breath_detected = true;
     } else {
