@@ -90,7 +90,7 @@ void ketoWhistle_loop() {
       if (button_interrupt_flag) {
         break;
       }
-      // delay(2000);
+      delay(2000);
     }
 
     if (current_co2 > (baseline_co2 + co2_threshold) || button_interrupt_flag) {
@@ -103,10 +103,6 @@ void ketoWhistle_loop() {
     // acetone_level = measure_acetone(&pc_ads1220);
   }
 
-
-  // while (!button_interrupt_flag) {
-  //   delay(1);
-  // }
   tone(A2, 1000, 2000);
 
   digitalWrite(ENAB_1, LOW);
