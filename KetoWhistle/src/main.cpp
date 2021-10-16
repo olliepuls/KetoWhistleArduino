@@ -84,6 +84,7 @@ void ketoWhistle_loop() {
       current_co2 = measure_CO2(&scd30);
       display_acetone_results(&display, 2000, current_co2);
       if (current_co2 > (baseline_co2 + co2_threshold)) {
+        breath_detected = true;
         break;
       }
       
