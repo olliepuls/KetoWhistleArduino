@@ -40,6 +40,11 @@ void ketoWhistle_loop() {
   // INITIAL STAGE - Waiting for Button Press to commence heating cycle. Take baseline CO2 level measurement.
   float baseline_co2 = measure_CO2(&scd30);
   button_interrupt_flag = false; // Reset button interrupt.
+  while(1) {
+    current_co2 = measure_CO2(&scd30);
+    display_acetone_results(&display, 2000, current_co2);
+  }
+  
   while (!button_interrupt_flag) {
     draw_anu(&display);
     delay_on_flag(2000, 100, button_interrupt_flag);
