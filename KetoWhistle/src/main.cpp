@@ -8,7 +8,7 @@
 #define ENAB_1 9
 
 // CO2 Detection Threshold
-#define CO2_THRESHOLD 500
+#define CO2_THRESHOLD 200
 
 Protocentral_ADS1220 pc_ads1220;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -76,16 +76,19 @@ void ketoWhistle_loop() {
     breath_prompt(&display);
     
     for (int i = 0; i < 5; i++) {
-      current_co2 = measure_CO2(&scd30);
+      
       //Serial.print(baseline_co2);
       //Serial.print("  ");
       //Serial.println(current_co2);
+      display_acetone_results(&display, 2000, baseline_co2);
+      current_co2 = measure_CO2(&scd30);
+      display_acetone_results(&display, 2000, current_co2);
       if (current_co2 > baseline_co2 + CO2_THRESHOLD) {break;}
       
       if (button_interrupt_flag) {
         break;
       }
-      delay(2000);
+      // delay(2000);
     }
 
     if (current_co2 > baseline_co2 + CO2_THRESHOLD || button_interrupt_flag) {
