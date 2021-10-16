@@ -8,7 +8,7 @@
 #define ENAB_1 9
 
 // CO2 Detection Threshold
-#define CO2_THRESHOLD 200
+#define CO2_THRESHOLD 500
 
 Protocentral_ADS1220 pc_ads1220;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -43,18 +43,13 @@ void ketoWhistle_loop() {
   // INITIAL STAGE - Waiting for Button Press to commence heating cycle. Take baseline CO2 level measurement.
   float baseline_co2 = measure_CO2(&scd30);
   button_interrupt_flag = false; // Reset button interrupt.
-  while(1) {
-    current_co2 = measure_CO2(&scd30);
-    display_acetone_results(&display, 2000, current_co2);
-  }
+  
+  draw_anu(&display);
+  delay(2000);
+  draw_logo(&display);
+  delay(2000);
   
   while (!button_interrupt_flag) {
-    draw_anu(&display);
-    delay_on_flag(2000, 100, button_interrupt_flag);
-    if (button_interrupt_flag) {break;}
-    draw_logo(&display);
-    delay_on_flag(2000, 100, button_interrupt_flag);
-    if (button_interrupt_flag) {break;}
     button_prompt(&display);
     delay_on_flag(2000, 100, button_interrupt_flag);
     if (button_interrupt_flag) {break;}
@@ -77,16 +72,21 @@ void ketoWhistle_loop() {
   bool breath_detected = false;
   button_interrupt_flag = false; // Reset button interrupt.
   float acetone_level = 12.2;
-  while (!breath_detected) {
+  while (!breath_detected || !button_interrupt_flag) {
     breath_prompt(&display);
     
     for (int i = 0; i < 5; i++) {
       current_co2 = measure_CO2(&scd30);
-      display_acetone_results(&display, 2000, current_co2);
       //Serial.print(baseline_co2);
       //Serial.print("  ");
       //Serial.println(current_co2);
       if (current_co2 > baseline_co2 + CO2_THRESHOLD) {break;}
+      
+      if (button_interrupt_flag) {
+        acetone_level = measure_acetone(&pc_ads1220);
+        breath_detected = true;
+        break;
+      }
       // delay(2000);
     }
 
@@ -104,7 +104,7 @@ void ketoWhistle_loop() {
   // while (!button_interrupt_flag) {
   //   delay(1);
   // }
-  tone(A2, 1000, 1000);
+  tone(A2, 1000, 2000);
 
   digitalWrite(ENAB_1, LOW);
   // Send results to Bluetooth if connected.
@@ -114,7 +114,7 @@ void ketoWhistle_loop() {
   }
   
   // RESULTS DISPLAY - Display acetone measurement results.
-  display_acetone_results(&display, 10000, acetone_level);
+  display_acetone_results(&display, 15000, acetone_level);
 }
 
 void setup()
