@@ -26,6 +26,8 @@ void BLE_setup(BLEService *service, BLECharacteristic *characteristic) {
   BLE.advertise();
 }
 
+
+
 void loop_BLE(BLEService *service, BLECharacteristic *characteristic) {
   // wait for a BLE central (phone)
   BLEDevice central = BLE.central();

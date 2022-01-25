@@ -20,6 +20,8 @@ BLEService testService("FFE0");
 // BLE test Characteristic
 BLEUnsignedIntCharacteristic acetoneCharacteristic("2A6C", BLERead | BLENotify); // remote clients will be able to get notifications if this characteristic changes
 
+BLEDevice central;
+
 // CO2 Global Variable
 float current_co2 = 10.0;
 float co2_threshold = 200.0F;
@@ -48,6 +50,9 @@ void ketoWhistle_loop() {
   delay(2000);
   draw_logo(&display);
   delay(2000);
+
+  // Connect to phone - Maybe add a prompt/button press to do this.
+  central = BLE.central();
   
   while (!button_interrupt_flag) {
     button_prompt(&display);
@@ -111,7 +116,7 @@ void ketoWhistle_loop() {
   digitalWrite(ENAB_1, LOW);
   // Send results to Bluetooth if connected.
   
-  if (BLE.connected()) {
+  if (central && central.connected()) {
     acetoneCharacteristic.writeValue((uint32_t) acetone_level);
   }
   
