@@ -126,13 +126,13 @@ void ketoWhistle_loop() {
 
 void setup()
 {
-  // BLE_setup(&testService, &acetoneCharacteristic);
-  ketoWhistle_setup();
+  BLE_setup(&testService, &acetoneCharacteristic);
+  // ketoWhistle_setup();
 }
 
 void loop()
 {
-  ketoWhistle_loop();
-  // loop_BLE(&testService, &acetoneCharacteristic);
+  // ketoWhistle_loop();
+  loop_BLE(&testService, &acetoneCharacteristic);
 }
 
