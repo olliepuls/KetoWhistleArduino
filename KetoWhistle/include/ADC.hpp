@@ -16,3 +16,4 @@ void ADC_test_setup(Protocentral_ADS1220 *pc_ads1220);
 
 void ADC_loop(Protocentral_ADS1220 *pc_ads1220);
 float measure_acetone(Protocentral_ADS1220 *pc_ads1220);
+float convert_voltage_to_acetone(float voltage, float baseline);

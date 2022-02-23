@@ -66,7 +66,7 @@ void ketoWhistle_loop() {
   // Turn on Acetone heater & Sensor Circuit
   digitalWrite(ENAB_1, HIGH);
   float temp = 0.0;
-  while (temp < 300) {
+  while (temp < 400) {
     // TODO: Calibrate temp sensor to return actual voltages.
     // temp = analogRead(TEMP_PIN);
     temp += 50.0;
@@ -76,7 +76,9 @@ void ketoWhistle_loop() {
   // BREATH STAGE - Prompt user to breathe into tube. Monitor CO2 levels for increase.
   bool breath_detected = false;
   button_interrupt_flag = false; // Reset button interrupt.
-  float acetone_level = 12.2;
+  
+  float baseline_voltage = measure_acetone(&pc_ads1220);
+  float acetone_level = 0.0;
 
   float baseline_co2 = measure_CO2(&scd30);
 
@@ -104,7 +106,7 @@ void ketoWhistle_loop() {
 
     if (breath_detected || button_interrupt_flag) {
       acetone_level = measure_acetone(&pc_ads1220);
-      acetone_level = 0.51;
+      // acetone_level = 0.51;
     } else {
       breath_abort_prompt(&display, 2000);
       baseline_co2 = min(current_co2, baseline_co2);
@@ -120,6 +122,7 @@ void ketoWhistle_loop() {
     acetoneCharacteristic.writeValue((uint32_t) acetone_level);
   }
   
+  acetone_level = convert_voltage_to_acetone(acetone_level, baseline_voltage);
   // RESULTS DISPLAY - Display acetone measurement results.
   display_acetone_results(&display, 15000, acetone_level);
 }

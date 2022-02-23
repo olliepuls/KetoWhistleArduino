@@ -43,12 +43,16 @@ void ADC_test_loop(Protocentral_ADS1220 *pc_ads1220)
 float measure_acetone(Protocentral_ADS1220 *pc_ads1220) {
   int32_t adc_data = pc_ads1220->Read_SingleShot_SingleEnded_WaitForData(MUX_AIN0_AVSS);
   float Vout = (float)((adc_data*VFSR*1000)/FSR);
-  // float acetone = convert_voltage_to_acetone(Vout);
   return Vout;
 }
 
-// Placeholder Function
-float convert_voltage_to_acetone(float voltage) {
-  float acetone = voltage;
+float convert_voltage_to_acetone(float voltage, float baseline) {
+  // ((R_air/R_gas - 1) + 0.1055)/0.3289 = concentration
+  // baseline = I_1*(1k), voltage = I_2*(R_gas + 1k)
+  float V_b = 5.0;
+  float R_air = V_b*1000.0/baseline - 1000.0;
+  float R_gas = V_b*1000.0/voltage - 1000.0;
+  // I_1 = V_batt/(R_air + 1k), baseline = V_b*1k/(R_air + 1k), R_air = (V_b*1k/baseline - 1k), R_gas = (V_b*1k/baseline - 1k)
+  float acetone = ((R_air/R_gas) - 1 + 0.1055)/0.3289;
   return acetone;
 }
