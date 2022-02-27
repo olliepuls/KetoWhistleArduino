@@ -61,70 +61,82 @@ void ketoWhistle_loop() {
   }
 
   // button_interrupt_flag = false; // Reset button interrupt.
+
+  // Check Tube Temperature
+  toggleTempSensorMode(&pc_ads1220);
+  float temp = measure_temperature(&pc_ads1220);
+  toggleTempSensorMode(&pc_ads1220);
   
-  // HEATING STAGE - Display Temperature 
-  // Turn on Acetone heater & Sensor Circuit
-  digitalWrite(ENAB_1, HIGH);
-  float temp = 0.0;
-  while (temp < 400) {
-    // TODO: Calibrate temp sensor to return actual voltages.
-    // temp = analogRead(TEMP_PIN);
-    temp += 50.0;
-    display_temperature(&display, 800, temp);
-  }
-
-  // BREATH STAGE - Prompt user to breathe into tube. Monitor CO2 levels for increase.
-  bool breath_detected = false;
-  button_interrupt_flag = false; // Reset button interrupt.
+  if (temp > 40.0) {
+    Devicetext(&display, "Too hot!", 10, 5, 1, false);
+    Devicetext(&display, "Wait for cooldown...", 10, 15, 1, false);
+    delay(10000);
+  } else {
   
-  float baseline_voltage = measure_acetone(&pc_ads1220);
-  float acetone_level = 0.0;
+    // HEATING STAGE - Display Temperature 
+    // Turn on Acetone heater & Sensor Circuit
+    digitalWrite(ENAB_1, HIGH);
+    float temp = 0.0;
+    while (temp < 400) {
+      // TODO: Calibrate temp sensor to return actual voltages.
+      // temp = analogRead(TEMP_PIN);
+      temp += 50.0;
+      display_temperature(&display, 800, temp);
+    }
 
-  float baseline_co2 = measure_CO2(&scd30);
-
-  while (!(breath_detected || button_interrupt_flag)) {
-    breath_prompt(&display);
+    // BREATH STAGE - Prompt user to breathe into tube. Monitor CO2 levels for increase.
+    bool breath_detected = false;
+    button_interrupt_flag = false; // Reset button interrupt.
     
-    for (int i = 0; i < 5; i++) {
-      
-      //Serial.print(baseline_co2);
-      //Serial.print("  ");
-      //Serial.println(current_co2);
-      // display_acetone_results(&display, 2000, co2_threshold);
-      current_co2 = measure_CO2(&scd30);
-      // display_acetone_results(&display, 2000, current_co2 - baseline_co2);
-      if ((current_co2 - baseline_co2) > co2_threshold) {
-        breath_detected = 1;
-        break;
-      }
-      
-      if (button_interrupt_flag) {
-        break;
-      }
-      delay(2000);
-    }
+    float baseline_voltage = measure_acetone(&pc_ads1220);
+    float acetone_level = 0.0;
 
-    if (breath_detected || button_interrupt_flag) {
-      acetone_level = measure_acetone(&pc_ads1220);
-      // acetone_level = 0.51;
-    } else {
-      breath_abort_prompt(&display, 2000);
-      baseline_co2 = min(current_co2, baseline_co2);
-    }
-  }
-  delay(5000);
-  tone(A2, 1000, 2000);
+    float baseline_co2 = measure_CO2(&scd30);
 
-  digitalWrite(ENAB_1, LOW);
-  // Send results to Bluetooth if connected.
-  
-  if (central && central.connected()) {
-    acetoneCharacteristic.writeValue((uint32_t) acetone_level);
+    while (!(breath_detected || button_interrupt_flag)) {
+      breath_prompt(&display);
+      
+      for (int i = 0; i < 5; i++) {
+        
+        //Serial.print(baseline_co2);
+        //Serial.print("  ");
+        //Serial.println(current_co2);
+        // display_acetone_results(&display, 2000, co2_threshold);
+        current_co2 = measure_CO2(&scd30);
+        // display_acetone_results(&display, 2000, current_co2 - baseline_co2);
+        if ((current_co2 - baseline_co2) > co2_threshold) {
+          breath_detected = 1;
+          break;
+        }
+        
+        if (button_interrupt_flag) {
+          break;
+        }
+        delay(2000);
+      }
+
+      if (breath_detected || button_interrupt_flag) {
+        acetone_level = measure_acetone(&pc_ads1220);
+        // acetone_level = 0.51;
+      } else {
+        breath_abort_prompt(&display, 2000);
+        baseline_co2 = min(current_co2, baseline_co2);
+      }
+    }
+    delay(5000);
+    tone(A2, 1000, 2000);
+
+    digitalWrite(ENAB_1, LOW);
+    // Send results to Bluetooth if connected.
+    
+    if (central && central.connected()) {
+      acetoneCharacteristic.writeValue((uint32_t) acetone_level);
+    }
+    
+    acetone_level = convert_voltage_to_acetone(acetone_level, baseline_voltage);
+    // RESULTS DISPLAY - Display acetone measurement results.
+    display_acetone_results(&display, 15000, acetone_level);
   }
-  
-  acetone_level = convert_voltage_to_acetone(acetone_level, baseline_voltage);
-  // RESULTS DISPLAY - Display acetone measurement results.
-  display_acetone_results(&display, 15000, acetone_level);
 }
 
 void setup()

@@ -34,9 +34,9 @@ void loop_BLE(BLEService *service, BLECharacteristic *characteristic) {
 
   // if a central is connected to the peripheral:
   if (central) {
-    Serial.print("Connected to central: ");
+    // // Serial.print("Connected to central: ");
     // print the central's BT address:
-    Serial.println(central.address());
+    // Serial.println(central.address());
     // turn on the LED to indicate the connection:
     digitalWrite(LED_BUILTIN, HIGH);
 
@@ -53,8 +53,8 @@ void loop_BLE(BLEService *service, BLECharacteristic *characteristic) {
     
     // when the central disconnects, turn off the LED:
     digitalWrite(LED_BUILTIN, LOW);
-    Serial.print("Disconnected from central: ");
-    Serial.println(central.address());
+    // Serial.print("Disconnected from central: ");
+    // Serial.println(central.address());
   }
 }
 #endif

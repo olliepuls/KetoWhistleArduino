@@ -56,3 +56,18 @@ float convert_voltage_to_acetone(float voltage, float baseline) {
   float acetone = ((R_air/R_gas) - 1 + 0.1055)/0.3289;
   return acetone;
 }
+
+void toggleTempSensorMode(Protocentral_ADS1220 *pc_ads1220) {
+  uint8_t curr_value = pc_ads1220->readRegister((uint8_t) 0x01);
+  // Toggle TS bit
+  curr_value = curr_value ^ ((uint8_t) 0x02);
+  // Write Value
+  pc_ads1220->writeRegister((uint8_t) 0x01, curr_value);
+}
+
+float measure_temperature(Protocentral_ADS1220 *pc_ads1220) {
+  int32_t temp_reading = pc_ads1220->Read_SingleShot_SingleEnded_WaitForData(MUX_AIN0_AVSS);
+  temp_reading = (temp_reading >> 10);
+  float temp = temp_reading * 0.03125;
+  return temp;
+}
