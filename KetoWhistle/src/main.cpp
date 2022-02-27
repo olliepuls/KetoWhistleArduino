@@ -19,6 +19,7 @@ BLEService testService("FFE0");
 
 // BLE test Characteristic
 BLEUnsignedIntCharacteristic acetoneCharacteristic("2A6C", BLERead | BLENotify); // remote clients will be able to get notifications if this characteristic changes
+BLEUnsignedIntCharacteristic deviceTempCharacteristic("2A6D", BLERead | BLENotify);
 
 BLEDevice central;
 
@@ -32,7 +33,7 @@ void ketoWhistle_setup() {
   OLED_setup(&display);
   scd30_test_setup(&scd30);
   ADC_test_setup(&pc_ads1220);
-  BLE_setup(&testService, &acetoneCharacteristic);
+  BLE_setup(&testService, &acetoneCharacteristic, &deviceTempCharacteristic);
 
   configure_button_interrupt();
 
@@ -141,13 +142,13 @@ void ketoWhistle_loop() {
 
 void setup()
 {
-  BLE_setup(&testService, &acetoneCharacteristic);
+  BLE_setup(&testService, &acetoneCharacteristic, &deviceTempCharacteristic);
   // ketoWhistle_setup();
 }
 
 void loop()
 {
   // ketoWhistle_loop();
-  loop_BLE(&testService, &acetoneCharacteristic);
+  loop_BLE(&testService, &acetoneCharacteristic, &deviceTempCharacteristic);
 }
 

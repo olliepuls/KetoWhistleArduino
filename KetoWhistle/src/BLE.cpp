@@ -2,7 +2,7 @@
 
 #include <BLE.hpp>
 #ifdef BLE_DEFINED
-void BLE_setup(BLEService *service, BLECharacteristic *characteristic) {
+void BLE_setup(BLEService *service, BLECharacteristic *characteristic, BLECharacteristic *tempCharacteristic) {
   // begin initialization
   if (!BLE.begin()) {
   }
@@ -15,6 +15,7 @@ void BLE_setup(BLEService *service, BLECharacteristic *characteristic) {
   BLE.setLocalName("KetoWhistle");
   BLE.setAdvertisedService(*service); // add the service UUID
   service->addCharacteristic(*characteristic); // add the test level characteristic
+  service ->addCharacteristic(*tempCharacteristic);
   BLE.addService(*service); // Add the test service
   BLE.setConnectable(true);
 
@@ -28,7 +29,7 @@ void BLE_setup(BLEService *service, BLECharacteristic *characteristic) {
 
 
 
-void loop_BLE(BLEService *service, BLECharacteristic *characteristic) {
+void loop_BLE(BLEService *service, BLECharacteristic *characteristic, BLECharacteristic *tempCharacteristic) {
   // wait for a BLE central (phone)
   BLEDevice central = BLE.central();
 
@@ -43,12 +44,15 @@ void loop_BLE(BLEService *service, BLECharacteristic *characteristic) {
     // check the test level every 200ms
     // while the central is connected:
     uint32_t data = 0;
+    
 
     while (central.connected()) {
       // if 200ms have passed, check the test level:
       (*characteristic).writeValue((uint32_t) data);  
+      (*tempCharacteristic).writeValue((uint32_t) data);
       data += 1;
       delay(1000);
+
     }
     
     // when the central disconnects, turn off the LED:
